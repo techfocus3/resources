@@ -10,8 +10,8 @@ ______ _     _      _                       _               __  _____  __
 |___/ |_|___/_|\_\ |_|_| |_| |_|\__,_|\__, |_|_| |_|\__, | \___/\___/ \___/
                                        __/ |         __/ |                 
                                       |___/         |___/                  
-This document is an introduction and tutorial to the practice of disk imaging. It was produced for the American Institute for Conservation of Historic and Artistic Work's third TechFocus workshop, hosted by the Solomon R. Guggenheim Museum, New York, NY on September 25th-26th, 2015.
 ```
+This document is an introduction and tutorial to the practice of disk imaging. It was produced by Ben Fino-Radin for the American Institute for Conservation of Historic and Artistic Work's third TechFocus workshop, TechFocus III: Caring for Software-based Art, hosted by the Solomon R. Guggenheim Museum, New York, NY on September 25th-26th, 2015.
 
 ### What is a disk image?
 A disk image is a file that usually contains a complete and linear "recording" of what your computer sees when it looks at a hard drive, USB drive, CD, DVD, or any other kind of digital carriers of information.
@@ -51,4 +51,13 @@ To begin, open up your terminal. To read the manual for dd, type ```man dd``` an
 
 ### Further reading
 * [The Forensics Wiki](http://forensicswiki.org)
-* 
+
+
+
+
+***
+
+
+![Creative Commons License](https://i.creativecommons.org/l/by/4.0/80x15.png)
+
+This document is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
