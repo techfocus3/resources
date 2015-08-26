@@ -121,7 +121,11 @@ In your terminal, type `ddrescue --help` and press enter. As you can see, ddresc
 ```
 $ ddrescue if=/dev/disk1s02 of=/home/techfocus/Desktop/ddrescue_demo.img
 ```
-As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed  raw images are wonderful for preservation 
+As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
+
+* we are not validating the disk image
+* we are not capturing metadata about its creation
+* we are not generating a checksum that can be validated later
 
 ### Further reading
 * [The Forensics Wiki](http://forensicswiki.org)
