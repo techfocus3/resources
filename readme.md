@@ -46,7 +46,7 @@ Although the physical form factor of USB 2.0 and 3.0 are identical – their in
 
 Although there are many many more tools one could use for disk imaging, for the purposes of this workshop we will be sticking with these three tools as examples. It warrants mentioning that all three are free and open source.
 
-### Giving the virtual machine control of the USB thumb drive
+### Handing control of the USB thumb drive to your Virtual Machine
 For this disk imaging exercise we will be making a disk image of the TechFocus USB thumb drive that you were provided at check-in. First – make sure that your Linux virtual machine is running, then plug in the TechFocus USB thumb drive. If the USB thumb drive was already plugged in when you started your virtual machine, please unplug it, and then plug it back in. This initial step is just to ensure that your Linux virtual machine has full control of the thumb drive, rather than your "real" computer.
 
 ### Preparing for disk imaging
@@ -103,9 +103,25 @@ $ dd if=[device file goes here] of=[path to write disk image to]
 The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/disk1s02`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it "dd_demo.001". This means your `of=` should now read `of=/home/techfocus/Desktop/dd_demo.001`. Stiching it all together, your full and complete command will look something like this:
 
 ```
-$ dd if=/dev/disk1s02 of=/home/techfocus/Desktop/dd_demo.001
+$ dd if=/dev/disk1s02 of=/home/techfocus/Desktop/dd_demo.img
+```
+Type or copy/pase the above and press enter to begin the process of imaging your disk. You will notice that there is absolutely no indication as to what is happening – is the disk imaging process running? Is it working? Has your computer frozen? By default `dd` does not provide the user with any useful feedback or output. It would be good to coax some information out of it so that we know the process is working, and so that we can get an idea of how far along it is in the process.
+
+In a new terminal window, type `killall -USR1 dd` and press enter. When you return to your terminal window where `dd` is running, you will now see some information displayed. This command forces `dd` to tell us how far along it is – but as you can see it only tells us once. In order to get a constant feed of `dd`'s progress, we will use the `watch` command. Open a new terminal window, type the following command, and press enter:
+
+```
+watch -n 1 'killall -USR1 dd'
 ```
 
+This tells our computer to repeat the `killall` command every second - and thus we are shown `dd`'s progress every second. This is a bit cumbersome though, so lets look at a slightly more featured program that is similar to `dd` but more user-friendly.
+
+### Using ddrescue
+In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. Give this a try:
+
+```
+$ ddrescue if=/dev/disk1s02 of=/home/techfocus/Desktop/ddrescue_demo.img
+```
+As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed  raw images are wonderful for preservation 
 
 ### Further reading
 * [The Forensics Wiki](http://forensicswiki.org)
