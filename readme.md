@@ -10,7 +10,7 @@ ______ _     _      _                       _               __  _____  __
 |___/ |_|___/_|\_\ |_|_| |_| |_|\__,_|\__, |_|_| |_|\__, | \___/\___/ \___/
                                        __/ |         __/ |                 
                                       |___/         |___/                  
-This document is an introduction and tutorial to the practice of disk imaging. It was produced by Ben Fino-Radin for the American Institute for Conservation of Historic and Artistic Work's third TechFocus workshop, TechFocus III: Caring for Software-based Art, hosted by the Solomon R. Guggenheim Museum, New York, NY on September 25th-26th, 2015.
+This document is an introduction and tutorial to the practice of disk imaging. It was prepared by Ben Fino-Radin for the American Institute for Conservation of Historic and Artistic Work's third TechFocus workshop, TechFocus III: Caring for Software-based Art, hosted by the Solomon R. Guggenheim Museum, New York, NY on September 25th-26th, 2015.
 ```
 
 ### What is a disk image?
@@ -103,7 +103,7 @@ $ dd if=[device file goes here] of=[path to write disk image to]
 The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/disk1s02`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it "dd_demo.001". This means your `of=` should now read `of=/home/techfocus/Desktop/dd_demo.001`. Stiching it all together, your full and complete command will look something like this:
 
 ```
-$ dd if=/dev/disk1s02 of=/home/techfocus/Desktop/dd_demo.img
+$ dd if=/dev/disk1s02 of=/home/techfocus/Desktop/dd_demo.001
 ```
 Type or copy/pase the above and press enter to begin the process of imaging your disk. You will notice that there is absolutely no indication as to what is happening – is the disk imaging process running? Is it working? Has your computer frozen? By default `dd` does not provide the user with any useful feedback or output. It would be good to coax some information out of it so that we know the process is working, and so that we can get an idea of how far along it is in the process.
 
@@ -119,13 +119,45 @@ This tells our computer to repeat the `killall` command every second - and thus 
 In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. Give this a try:
 
 ```
-$ ddrescue if=/dev/disk1s02 of=/home/techfocus/Desktop/ddrescue_demo.img
+$ ddrescue if=/dev/disk1s02 of=/home/techfocus/Desktop/ddrescue_demo.001
 ```
 As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
 
 * we are not validating the disk image
 * we are not capturing metadata about its creation
 * we are not generating a checksum that can be validated later
+
+### Forensic Disk Image Formats
+There are alternatives to raw disk images that address the above three concerns. Forensic disk image formats (the name being owed to the fact that such file formats were created in response to the needs of criminal forensics) include embedded metadata about the moment of acquisition, or capture – both information manually entered by the creator of the disk image, but also automatically captured information about the source disk and system capturing the disk. This is all good news for long-term preservation as this ensures that information of the provenance of a given disk image is inherent in the image itself. Two downsides to forensic disk image formats are that A) all formats are proprietary, and B) support of forensic disk images in emulators and virtualization platforms is spotty, and often an image will need to be converted for use with such tools. The Encase forensic disk image format is arguably the most widely adopted format, and it has been thoroughly reverse engineered and is supported by various free and open source tools. One such tool we will look at now is called Guymager.
+
+### Using Guymager
+You will be happy to learn that we will now be leaving the command line! Guymager, a free and open source tool for creating disk images, has a graphical user interface (GUI). Launch Guymager either by typing `sudo guymager` in your terminal, or by clicking the Guymager icon in the application launcher. When Guymager launches you will see a window similar to this:
+
+![guymager launch screen](images/guymager-start.png)
+
+This screen lists all of your attached storage devices. You should see your USB thumb drive listed. In the "Linux device" column you should be able to locate the device file we have used in the `dd` and `ddrescue` tutorials. Right click anywhere on the row for this device and choose "acquire image" from the contextual menu. 
+
+![guymager acquire image screen](images/guymager-acquire.png)
+
+Next you will see the following window:
+
+![guymager acquire image screen](images/guymager-metadata.png)
+
+Make sure to select `Expert Witness Format`. The "Split size" option is in case you wish to divide the disk image into many small files rather than one large file. For our purposes we will stick with one file. The way to trick the software into doing this is to set a split size that is absurdly large. In the above figure we have set the split size to 99,999 TB. Below this are the `case number`, `evidence number`, `examiner`, `description`, and `notes` fields. These metadata fields are obviously designed for use in a criminal investigation setting, however it is not difficult to imagine how they may be adapted to suit the needs of cultural heritage – i.e. using `case number` for an accession number, `evidence number` for a more granular identifier, `examiner` recording who created the disk image, and `description` and `notes` being of course already generic. Complete each of these fields as you see fit. Click the "..." button to select the image directory (choose the Desktop), complete the file name, and info filename. In the `Hash calculation / verification` area at the bottom, make sure `Calculate MD5` and `Calculate SHA-256` are checked, as well as the last two check boxes: `Re-read source…` and `Verify image…`. These last two features are critical as they not only ensure that the disk image will be compared to the source disk bit-for-bit to ensure that a good copy was recorded, but also, that the disk will be read a second time for this comparison, so as to ensure that there were no undeteced read errors during imaging. Double check all of your settings, and click `start`. You should now see some feedback in the Guymager GUI.
+
+![](images/guymager-running.png)
+
+When the imaging and verification process is complete, you should see `Finished - Verified & ok`:
+
+![](./images/guymager-complete.png)
+
+Congratulations – you are the proud new owner of a forensic disk image!
+
+### Beyond the disk image
+Disk imaging is a crucial baseline process in digital preservation and conservation, but creating one and properly storing it in a digital repository is only part of the story. In many ways a disk image can be thought of as a black box. Just as we can not assume that in 100 years people will have the proper software to play a Quicktime, and that we must accompany files with `representation information` about their makeup – it is advisable to do the same with disk imgages.
+
+Using a command line based tool called fiwalk we can extract metadata (in the Digital Forensics XML format) about the filesystem contained within the disk image.
+
 
 ### Further reading
 * [The Forensics Wiki](http://forensicswiki.org)
