@@ -1,5 +1,3 @@
-# TechFocus III: Caring for Software-based Art
-
 
  ```
 ______ _     _      _                       _               __  _____  __  
