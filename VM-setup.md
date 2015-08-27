@@ -8,4 +8,4 @@ The TechFocus III practical sessions will require the use of very specialized so
 
 1. Download VirtualBox binary appropriate for your operating system from here: [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)
 2. Install VirtualBox by following the installer instructions
-3. Download and install the VirtualBox 5.0.2 Oracle VM VirtualBox Extension Pack
+3. Download and install the VirtualBox 5.0.2 Oracle VM VirtualBox Extension Pack4. 

@@ -1,18 +1,11 @@
 
  ```
-______ _     _      _                       _               __  _____  __  
-|  _  (_)   | |    (_)                     (_)             /  ||  _  |/  | 
-| | | |_ ___| | __  _ _ __ ___   __ _  __ _ _ _ __   __ _  `| || |/' |`| | 
-| | | | / __| |/ / | | '_ ` _ \ / _` |/ _` | | '_ \ / _` |  | ||  /| | | | 
-| |/ /| \__ \   <  | | | | | | | (_| | (_| | | | | | (_| | _| |\ |_/ /_| |_
-|___/ |_|___/_|\_\ |_|_| |_| |_|\__,_|\__, |_|_| |_|\__, | \___/\___/ \___/
-                                       __/ |         __/ |                 
-                                      |___/         |___/                  
-This document is an introduction and tutorial to the practice of disk imaging.
-It was prepared by Ben Fino-Radin for the American Institute for Conservation
-of Historic and Artistic Work's third TechFocus workshop, TechFocus III: Caring
-for Software-based Art, hosted by the Solomon R. Guggenheim Museum, New York, NY
-on September 25th-26th, 2015.
+    ___ _     _       _____                       _               _  ___  _ 
+   /   (_)___| | __   \_   \_ __ ___   __ _  __ _(_)_ __   __ _  / |/ _ \/ |
+  / /\ / / __| |/ /    / /\/ '_ ` _ \ / _` |/ _` | | '_ \ / _` | | | | | | |
+ / /_//| \__ \   <  /\/ /_ | | | | | | (_| | (_| | | | | | (_| | | | |_| | |
+/___,' |_|___/_|\_\ \____/ |_| |_| |_|\__,_|\__, |_|_| |_|\__, | |_|\___/|_|
+                                            |___/         |___/                                                          
 ```
 
 ### What is a disk image?
