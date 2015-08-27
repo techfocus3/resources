@@ -156,7 +156,36 @@ Congratulations – you are the proud new owner of a forensic disk image!
 ### Beyond the disk image
 Disk imaging is a crucial baseline process in digital preservation and conservation, but creating one and properly storing it in a digital repository is only part of the story. In many ways a disk image can be thought of as a black box. Just as we can not assume that in 100 years people will have the proper software to play a Quicktime, and that we must accompany files with `representation information` about their makeup – it is advisable to do the same with disk imgages.
 
-Using a command line based tool called fiwalk we can extract metadata (in the Digital Forensics XML format) about the filesystem contained within the disk image.
+### Fiwalk
+Using a command line based tool called fiwalk we can extract metadat about the filesystem contained within the disk image. In your terminal type the `fiwalk` command, followed by a `space`, and then drag and drop the E01 disk image we produced with Guymager directly into your terminal window. Your command should read like so:
+
+```
+fiwalk [path/to/disk/image.E01]
+```
+Press enter. Fiwalk is now extracting information about the filesystem contained within the disk image – including an MD5 and SHA1 checksum for every single file. `fiwalk` is only outputting this metadata to the command line - we of course want to record this information in file form. `fiwalk` supports the output of XML in the Digita Forensics XML (DFXML) format. If your first fiwalk command is still running, press and hold the `control` button on your keyboard, and while holding control, press the letter `c`. This is called a `keyboard intterupt`, and is a way of halting a running program in your terminal. Now, press the up arrow on your keyboard. This will recall the last command that you typed. At the end of your command, add the following: `-X ~/Desktop/fiwalk.xml` Your full command should now look like this:
+```
+fiwalk [path/to/disk/image.E01] -X ~/Desktop/fiwalk.xml
+```
+Press enter. Switching the `fiwalk` output to XML means that you will not see any output from the tool until it finishes. When the process completes you will see a new line in your terminal with a blinking cursor. When you see this new line, type `gedit ~/Desktop/fiwalk.xml` and press enter. This will open the XML file in a text editor so that we can read it. Feel free to browse around and get a feel for what DFXML looks like.
+
+
+### Emulation
+Lastly we will take a quick look at how emulation can provide a novel type of access to disk images. Let's say that your institution has collected acquired the archive of an artist, and that this archive includes the artst's personal computer – a Macintosh IIci.
+
+![](images/MacII.jpg)
+
+You know well that you can not simply store this computer indefinitely as a preservation strategy, and because you attended the TechFocus III workshop you know how to create a disk image of the computer's hard drive. You disk image the computer, store this disk image in your instutition's repository, but then what? Let's take a look at how we can use an emulator to breathe life back into this disk image, so that it can serve as a proxy for the original computer. On the desktop of your virtual machine, you will find a folder named `Mini vMac`. Open it. Inside you will find three files, `MacII.ROM`, `Macintosh_IIci.001`, and `Mini vMac`. `Mini vMac` is an emulator – in this case it has been built to specifically emulate a Macintosh IIi, since this was the kind of computer the artist was using. `MacII.ROM` is a file that gives instructions to the emulator when it is first run – this ROM was extracted from a Mac IIci. The `Macintosh_IIci.001` file is a raw disk image of the artist's computer's hard drive. Let's launch the emulator – double click the purple `Mini vMac` icon. Initially you will see a window with a flashing disk icon:
+
+![](images/miniv-1.png)
+
+Once you see this screen, return to the Mini vMac folder, drag and drop the `Macintosh_IIci.001` file onto the Mini vMac window with the flashing disk – like so:
+
+![](images/miniv-2.png)
+
+You should now see the computer begin to boot, and eventually you will be presented with a desktop – take a look around! Everything is exactly as the artist left it – everything from the software they used, to their placement of icons. When you are finished looking around, shut down the computer from the `special` menu. Never simply quit the emulator as this can potentially corrupt the disk image.
+
+### Conclusion
+This concludes the TechFocus III practical session on disk imaging, metadata extraction, and emulation. If you have any follow up questions please feel free to contact the instructor: ben_fino-radin@moma.org.
 
 
 ### Further reading
