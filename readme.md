@@ -190,6 +190,7 @@ This concludes the TechFocus III practical session on disk imaging, metadata ext
 
 ### Further reading
 * [The Forensics Wiki](http://forensicswiki.org)
+* more to come…
 
 
 
