@@ -85,7 +85,7 @@ Now that we have the device file, we need to "unmount" the "Volume". The USB dev
 ```
 $ sudo umount /media/techfocus/Macintosh\ HD/
 ```
-***! Important ! *** the `$` in the above line is not for you to type into your terminal. As you may have noticed when you opened your terminal, a new line begins with `techfocus@techfocus-VirtualBox:~$`. The `$` symbol is standardly used to indicate the begining of the command prompt. At this point we now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
+***Important:*** the `$` in the above line is not for you to type into your terminal. As you may have noticed when you opened your terminal, a new line begins with `techfocus@techfocus-VirtualBox:~$`. The `$` symbol is standardly used to indicate the begining of the command prompt. At this point we now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
 
 
 ### Using dd
@@ -111,12 +111,19 @@ $ watch -n 1 'killall -USR1 dd'
 This tells our computer to repeat the `killall` command every second - and thus we are shown `dd`'s progress every second. This is a bit cumbersome though, so lets look at a slightly more featured program that is similar to `dd` but more user-friendly.
 
 ### Using ddrescue
-In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. Give this a try:
+In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. This time we will make a disk image of a different drive. Thus we first need to unmount it:
 
 ```
-$ ddrescue if=/dev/disk1s02 of=/home/techfocus/Desktop/ddrescue_demo.001
+$ sudo umount /media/techfocus/Ben\'s\ PC/
 ```
-As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
+
+Then give this a try:
+
+```
+$ sudo ddrescue if=/dev/sdb1 of=/home/techfocus/Desktop/Bens_PC.001
+```
+
+This time we are disk imaging a different volume of the USB thumb drive. As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
 
 * we are not validating the disk image
 * we are not capturing metadata about its creation
@@ -130,7 +137,7 @@ You will be happy to learn that we will now be leaving the command line! Guymage
 
 ![guymager launch screen](images/guymager-start.png)
 
-This screen lists all of your attached storage devices. You should see your USB thumb drive listed. In the "Linux device" column you should be able to locate the device file we have used in the `dd` and `ddrescue` tutorials. Right click anywhere on the row for this device and choose "acquire image" from the contextual menu. 
+This screen lists all of your attached storage devices. You should see your USB thumb drive listed. In the "Linux device" column you should see `USB DISK 2.0`. Guymager only allows one to create physical disk images - in other words - our USB thumb drive is partitioned into three mountable volumes. With `dd` and `ddrescue` we were creating logical images of specific volumes of the USB thumb drive. A physical image is most desireable from a preservation standpoint as it is the most complete capture possible. Right click anywhere on the row for this device and choose "acquire image" from the contextual menu. 
 
 ![guymager acquire image screen](images/guymager-acquire.png)
 
@@ -142,7 +149,7 @@ Make sure to select `Expert Witness Format`. The "Split size" option is in case 
 
 ![](images/guymager-running.png)
 
-When the imaging and verification process is complete, you should see `Finished - Verified & ok`:
+Normally we would wait for the disk imaging, and verification processes to complete, however your computer most likely does not have enough free space to complete this image. When the imaging and verification process is complete, you should see `Finished - Verified & ok`:
 
 ![](./images/guymager-complete.png)
 
@@ -152,14 +159,14 @@ Congratulations – you are the proud new owner of a forensic disk image!
 Disk imaging is a crucial baseline process in digital preservation and conservation, but creating one and properly storing it in a digital repository is only part of the story. In many ways a disk image can be thought of as a black box. Just as we can not assume that in 100 years people will have the proper software to play a Quicktime, and that we must accompany files with `representation information` about their makeup – it is advisable to do the same with disk imgages.
 
 ### Fiwalk
-Using a command line based tool called fiwalk we can extract metadat about the filesystem contained within the disk image. In your terminal type the `fiwalk` command, followed by a `space`, and then drag and drop the E01 disk image we produced with Guymager directly into your terminal window. Your command should read like so:
+Using a command line based tool called `fiwalk` we can extract metadat about the filesystem contained within a disk image. Let's use this tool to generate metadata about the `Ben's PC` disk image. In your terminal type the `fiwalk` command, followed by a `space`, and then drag and drop the `Bens_PC.001` disk image we produced with ddrescue directly into your terminal window. Your command should read like so:
 
 ```
-fiwalk [path/to/disk/image.E01]
+$ fiwalk /home/techfocus/Desktop/Bens_PC.001
 ```
 Press enter. Fiwalk is now extracting information about the filesystem contained within the disk image – including an MD5 and SHA1 checksum for every single file. `fiwalk` is only outputting this metadata to the command line - we of course want to record this information in file form. `fiwalk` supports the output of XML in the Digita Forensics XML (DFXML) format. If your first fiwalk command is still running, press and hold the `control` button on your keyboard, and while holding control, press the letter `c`. This is called a `keyboard intterupt`, and is a way of halting a running program in your terminal. Now, press the up arrow on your keyboard. This will recall the last command that you typed. At the end of your command, add the following: `-X ~/Desktop/fiwalk.xml` Your full command should now look like this:
 ```
-fiwalk [path/to/disk/image.E01] -X ~/Desktop/fiwalk.xml
+$ fiwalk /home/techfocus/Desktop/Bens_PC.001 -X ~/Desktop/fiwalk.xml
 ```
 Press enter. Switching the `fiwalk` output to XML means that you will not see any output from the tool until it finishes. When the process completes you will see a new line in your terminal with a blinking cursor. When you see this new line, type `gedit ~/Desktop/fiwalk.xml` and press enter. This will open the XML file in a text editor so that we can read it. Feel free to browse around and get a feel for what DFXML looks like.
 
