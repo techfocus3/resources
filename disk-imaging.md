@@ -68,44 +68,44 @@ none on /sys/fs/pstore type pstore (rw)
 systemd on /sys/fs/cgroup/systemd type cgroup (rw,noexec,nosuid,nodev,none,name=systemd)
 gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,user=techfocus)
 /dev/sr0 on /media/techfocus/VBOXADDITIONS_5.0.0_101573 type iso9660 (ro,nosuid,nodev,uid=1000,gid=1000,iocharset=utf8,mode=0400,dmode=0500,uhelper=udisks2)
+/dev/sdb3 on /media/techfocus/Macintosh HD type hfs (rw,nosuid,nodev,allow_other,default_permissions,blksize=4096)
+/dev/sdb2 on /media/techfocus/TechFocus type fuseblk (rw,nosuid,nodev,allow_other,default_permissions,blksize=4096)
 ```
 
-This is a list of all of the mounted devices in your Linux virtual machine. Look for the line that mentions "TechFocus III". You will see that this line has three parts, first something that looks like `/dev/disk1s02`, followed by `/media/techfocus/Mac\ IIci`, and finally followed by `type HFS`. In other words:
+This is a list of all of the mounted devices in your Linux virtual machine. Look for the line that mentions `Macintosh HD`. You will see that this line has three parts, first something that looks like `/dev/sdb3`, followed by `/media/techfocus/Macintosh HD`, and finally followed by `type fuseblk`. In other words:
 
 ```
-/dev/disk1s02 /media/techfocus/Mac\ IIci type NTFS
+/dev/sbd3 /media/techfocus/Macintosh HD type hfs
 ```
 
-The second part of the line you will recognize as being the name of the USB thumb drive – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/disk1s02` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the USB thumb drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
+The second part of the line you will recognize as being the name of one of the USB thumb drive – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/sdb3` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the USB thumb drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
 
-Now that we have the device file, we need to "unmount" the "Volume". The USB device is currently preoccupied with talking to your operating system so that it can show you the `Mac IIci` Volume and the files inside it. We need its full attention so that `dd` can read it in full. To unmount the Mac IIci Volume, type the following into your terminal and press enter:
+Now that we have the device file, we need to "unmount" the "Volume". The USB device is currently preoccupied with talking to your operating system so that it can show you the `Macintosh HD` Volume and the files inside it. We need its full attention so that `dd` can read it in full. To unmount the Mac IIci Volume, type the following into your terminal and press enter (note the `\` after the word `Macintosh` this time. In the terminal, when you type in file paths with spaces you need to tell the computer that the space is intentional, and that you are continuing the file path. Computers unfortunately really are that dumb.):
 
 ```
-sudo umount /media/techfocus/Mac\ IIci
+$ sudo umount /media/techfocus/Macintosh\ HD/
 ```
-
-We now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
+***! Important ! *** the `$` in the above line is not for you to type into your terminal. As you may have noticed when you opened your terminal, a new line begins with `techfocus@techfocus-VirtualBox:~$`. The `$` symbol is standardly used to indicate the begining of the command prompt. At this point we now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
 
 
 ### Using dd
 
-To begin, open up your terminal. To read the manual for dd, type `man dd` and press enter. As you can see, `dd` has many options. The two we only really care about for this exercise are `if` and `of` – these are short for "input file"" and "output file" or some variant of those words. Press `q` to exit the man page. The basic syntax we want to use for making a disk image with `dd` is as follows:
+To begin, open up your terminal. To read the manual for dd, type `man dd` and press enter. `Man` in this case is short for `manual`. As you can see, `dd` has many options. The two we only really care about for this exercise are `if` and `of` – these are short for "input file"" and "output file" or some variant of those words. Press `q` to exit the man page. The basic syntax we want to use for making a disk image with `dd` is as follows (remember, don't actually type the `$` symbol!):
 
 ```
 $ dd if=[device file goes here] of=[path to write disk image to]
 ```
-
-The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/disk1s02`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it "dd_demo.001". This means your `of=` should now read `of=/home/techfocus/Desktop/dd_demo.001`. Stiching it all together, your full and complete command will look something like this:
+The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. This use of square brackets is very commonly used in examples of propper usage of command line tools. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/sdb3`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it `Macintosh_HD.001`. This means your `of=` should now read `of=/home/techfocus/Desktop/Macintosh_HD.001`. Stiching it all together, your full and complete command will look something like this:
 
 ```
-$ dd if=/dev/disk1s02 of=/home/techfocus/Desktop/dd_demo.001
+$ dd if=/dev/sdb3 of=/home/techfocus/Desktop/Macintosh_HD.001
 ```
 Type or copy/pase the above and press enter to begin the process of imaging your disk. You will notice that there is absolutely no indication as to what is happening – is the disk imaging process running? Is it working? Has your computer frozen? By default `dd` does not provide the user with any useful feedback or output. It would be good to coax some information out of it so that we know the process is working, and so that we can get an idea of how far along it is in the process.
 
 In a new terminal window, type `killall -USR1 dd` and press enter. When you return to your terminal window where `dd` is running, you will now see some information displayed. This command forces `dd` to tell us how far along it is – but as you can see it only tells us once. In order to get a constant feed of `dd`'s progress, we will use the `watch` command. Open a new terminal window, type the following command, and press enter:
 
 ```
-watch -n 1 'killall -USR1 dd'
+$ watch -n 1 'killall -USR1 dd'
 ```
 
 This tells our computer to repeat the `killall` command every second - and thus we are shown `dd`'s progress every second. This is a bit cumbersome though, so lets look at a slightly more featured program that is similar to `dd` but more user-friendly.
@@ -126,7 +126,7 @@ As you can see, `ddrescue`'s output is much more useful – right out of the bo
 There are alternatives to raw disk images that address the above three concerns. Forensic disk image formats (the name being owed to the fact that such file formats were created in response to the needs of criminal forensics) include embedded metadata about the moment of acquisition, or capture – both information manually entered by the creator of the disk image, but also automatically captured information about the source disk and system capturing the disk. This is all good news for long-term preservation as this ensures that information of the provenance of a given disk image is inherent in the image itself. Two downsides to forensic disk image formats are that A) all formats are proprietary, and B) support of forensic disk images in emulators and virtualization platforms is spotty, and often an image will need to be converted for use with such tools. The Encase forensic disk image format is arguably the most widely adopted format, and it has been thoroughly reverse engineered and is supported by various free and open source tools. One such tool we will look at now is called Guymager.
 
 ### Using Guymager
-You will be happy to learn that we will now be leaving the command line! Guymager, a free and open source tool for creating disk images, has a graphical user interface (GUI). Launch Guymager either by typing `sudo guymager` in your terminal, or by clicking the Guymager icon in the application launcher. When Guymager launches you will see a window similar to this:
+You will be happy to learn that we will now be leaving the command line! Guymager, a free and open source tool for creating disk images, has a Graphical User Interface (GUI). Launch Guymager either by typing `sudo guymager` in your terminal, or by clicking the Guymager icon in the application launcher. When Guymager launches you will see a window similar to this:
 
 ![guymager launch screen](images/guymager-start.png)
 
