@@ -43,9 +43,11 @@ Although there are many many more tools one could use for disk imaging, for the 
 
 ### Preparing for disk imaging
 
-Before we can dive into using dd, ddrescue, and guymager to actually make disk images, there is some initial preparation that we need to do. Firstly, we need to find what is essentially an identifier your computer uses to refer to the USB thumb drive as a physical device.
+Before we can dive into using dd, ddrescue, and guymager to actually make disk images, there is some initial preparation that we need to do. Firstly, we need to find what is essentially an identifier your computer uses to refer to the disks we want to image. To begin, let's make sure that the two virtual disks we will be imaging are mounted by the computer. Click both hard drive icons in your application launcher on the left side of your screen:
 
-Type `mount` in your terminal and press enter. You will see something similar to this, though there may be slight variation:
+![](images/mount-mac.png) ![](images/mount-cat.png) 
+
+You can close the two windows that pop up. Next, open up your terminal, type `mount` and press enter. You will see something similar to this, though there may be slight variation:
 
 ```
 /dev/sda1 on / type ext4 (rw,errors=remount-ro)
@@ -68,43 +70,39 @@ gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,user=tec
 /dev/sdb on /media/techfocus/Cat Archive type ext4 (rw,nosuid,nodev,uhelper=udisks2)
 ```
 
-This is a list of all of the mounted devices in your Linux virtual machine. Look for the line that mentions `Macintosh HD`. You will see that this line has three parts, first something that looks like `/dev/sdb3`, followed by `/media/techfocus/Macintosh HD`, and finally followed by `type fuseblk`. In other words:
+This is a list of all of the mounted devices in your Linux virtual machine. The last two lines are the one's we will be focusing on. Right now, we want to find the line that mentions `Macintosh HD`. You will see that the line has three parts. First `/dev/sdc`, followed by `/media/techfocus/Macintosh HD`, and finally followed by `type hfs`. In other words:
 
 ```
 /dev/sbc /media/techfocus/Macintosh HD type hfs
 ```
 
-The second part of the line you will recognize as being the name of one of the USB thumb drive – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/sdc` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the USB thumb drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
+The second part of the line you will recognize as being the name of one of the hard drive that you saw in your operating system's graphical user interface – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/sdc` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the hard drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
 
 Now that we have the device file, we need to "unmount" the "Volume". The USB device is currently preoccupied with talking to your operating system so that it can show you the `Macintosh HD` Volume and the files inside it. We need its full attention so that `dd` can read it in full. To unmount the Mac IIci Volume, type the following into your terminal and press enter (note the `\` after the word `Macintosh` this time. In the terminal, when you type in file paths with spaces you need to tell the computer that the space is intentional, and that you are continuing the file path. Computers unfortunately really are that dumb.):
 
 ```
 $ sudo umount /media/techfocus/Macintosh\ HD/
 ```
-***Important:*** the `$` in the above line is not for you to type into your terminal. As you may have noticed when you opened your terminal, a new line begins with `techfocus@techfocus-VirtualBox:~$`. The `$` symbol is standardly used to indicate the begining of the command prompt. At this point we now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
+**Important point #1:** the `$` in the above line is not for you to type into your terminal. As you may have noticed when you opened your terminal, a new line begins with `techfocus@techfocus-VirtualBox:~$`. The `$` symbol is standardly used to indicate the begining of the command prompt.
+
+**Important point #2:** when you use "sudo" (short for "super user do"), sometimes the computer will ask for your password. The password for the TechFocus virtual machine is "password".
+
+
+At this point we now have our device file, and we have unmounted the Volume we would like to image – and so we are ready to disk image!
 
 
 ### Using dd
-
-To begin, open up your terminal. To read the manual for dd, type `man dd` and press enter. `Man` in this case is short for `manual`. As you can see, `dd` has many options. The two we only really care about for this exercise are `if` and `of` – these are short for "input file"" and "output file" or some variant of those words. Press `q` to exit the man page. The basic syntax we want to use for making a disk image with `dd` is as follows (remember, don't actually type the `$` symbol!):
+If it isn't open already, open up your terminal. To read the manual for dd, type `man dd` and press enter. `Man` in this case is short for `manual`. As you can see, `dd` has many options. The two we only really care about for this exercise are `if` and `of` – these are short for "input file"" and "output file" or some variant of those words. Press `q` to exit the man page. The basic syntax we want to use for making a disk image with `dd` is as follows (remember, don't actually type the `$` symbol!):
 
 ```
-$ dd if=[device file goes here] of=[path to write disk image to]
+$ sudo dd if=[device file goes here] of=[path to write disk image to]
 ```
 The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. This use of square brackets is very commonly used in examples of propper usage of command line tools. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/sdc`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it `Macintosh_HD.001`. This means your `of=` should now read `of=/home/techfocus/Desktop/Macintosh_HD.001`. Stiching it all together, your full and complete command will look something like this:
 
 ```
-$ dd if=/dev/sdc of=/home/techfocus/Desktop/Macintosh_HD.001
+$ sudo dd if=/dev/sdc of=/home/techfocus/Desktop/Macintosh_HD.001
 ```
-Type or copy/pase the above and press enter to begin the process of imaging your disk. You will notice that there is absolutely no indication as to what is happening – is the disk imaging process running? Is it working? Has your computer frozen? By default `dd` does not provide the user with any useful feedback or output. It would be good to coax some information out of it so that we know the process is working, and so that we can get an idea of how far along it is in the process.
-
-In a new terminal window, type `killall -USR1 dd` and press enter. When you return to your terminal window where `dd` is running, you will now see some information displayed. This command forces `dd` to tell us how far along it is – but as you can see it only tells us once. In order to get a constant feed of `dd`'s progress, we will use the `watch` command. Open a new terminal window, type the following command, and press enter:
-
-```
-$ watch -n 1 'killall -USR1 dd'
-```
-
-This tells our computer to repeat the `killall` command every second - and thus we are shown `dd`'s progress every second. This is a bit cumbersome though, so lets look at a slightly more featured program that is similar to `dd` but more user-friendly.
+Type or copy/pase the above and press enter to begin the process of imaging your disk. Because our virtual hard drive is very small, dd will finish nearly instantly. dd is frustrating when working with anything larger than a few Gigabytes, as while it is working it does not provide any feedback to the user. There are tricks for working around this limitation, but instead we can simply rely on a tool with a more user-friendly design: ddrescue.
 
 ### Using ddrescue
 In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. This time we will make a disk image of a different drive. Thus we first need to unmount it:
@@ -141,11 +139,7 @@ Next you will see the following window:
 
 ![guymager acquire image screen](images/guymager-metadata.png)
 
-Make sure to select `Expert Witness Format`. The "Split size" option is in case you wish to divide the disk image into many small files rather than one large file. For our purposes we will stick with one file. The way to trick the software into doing this is to set a split size that is absurdly large. In the above figure we have set the split size to 99,999 TB. Below this are the `case number`, `evidence number`, `examiner`, `description`, and `notes` fields. These metadata fields are obviously designed for use in a criminal investigation setting, however it is not difficult to imagine how they may be adapted to suit the needs of cultural heritage – i.e. using `case number` for an accession number, `evidence number` for a more granular identifier, `examiner` recording who created the disk image, and `description` and `notes` being of course already generic. Complete each of these fields as you see fit. Click the "..." button to select the image directory (choose the Desktop), complete the file name, and info filename. In the `Hash calculation / verification` area at the bottom, make sure `Calculate MD5` and `Calculate SHA-256` are checked, as well as the last two check boxes: `Re-read source…` and `Verify image…`. These last two features are critical as they not only ensure that the disk image will be compared to the source disk bit-for-bit to ensure that a good copy was recorded, but also, that the disk will be read a second time for this comparison, so as to ensure that there were no undeteced read errors during imaging. Double check all of your settings, and click `start`. You should now see some feedback in the Guymager GUI.
-
-![](images/guymager-running.png)
-
-Normally we would wait for the disk imaging, and verification processes to complete, however your computer most likely does not have enough free space to complete this image. When the imaging and verification process is complete, you should see `Finished - Verified & ok`:
+Make sure to select `Expert Witness Format`. The "Split size" option is in case you wish to divide the disk image into many small files rather than one large file. For our purposes we will stick with one file. The way to trick the software into doing this is to set a split size that is absurdly large. In the above figure we have set the split size to 99,999 TB. Below this are the `case number`, `evidence number`, `examiner`, `description`, and `notes` fields. These metadata fields are obviously designed for use in a criminal investigation setting, however it is not difficult to imagine how they may be adapted to suit the needs of cultural heritage – i.e. using `case number` for an accession number, `evidence number` for a more granular identifier, `examiner` recording who created the disk image, and `description` and `notes` being of course already generic. Complete each of these fields as you see fit. Click the "..." button to select the image directory (choose the Desktop), complete the file name, and info filename. In the `Hash calculation / verification` area at the bottom, make sure `Calculate MD5` and `Calculate SHA-256` are checked, as well as the last two check boxes: `Re-read source…` and `Verify image…`. These last two features are critical as they not only ensure that the disk image will be compared to the source disk bit-for-bit to ensure that a good copy was recorded, but also, that the disk will be read a second time for this comparison, so as to ensure that there were no undeteced read errors during imaging. Double check all of your settings, and click `start`. You should now see some feedback in the Guymager GUI. When the imaging and verification process is complete, you should see `Finished - Verified & ok`:
 
 ![](./images/guymager-complete.png)
 
