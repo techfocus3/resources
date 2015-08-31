@@ -105,7 +105,7 @@ $ sudo dd if=/dev/sdc of=/home/techfocus/Desktop/Macintosh_HD.001
 Type or copy/pase the above and press enter to begin the process of imaging your disk. Because our virtual hard drive is very small, dd will finish nearly instantly. dd is frustrating when working with anything larger than a few Gigabytes, as while it is working it does not provide any feedback to the user. There are tricks for working around this limitation, but instead we can simply rely on a tool with a more user-friendly design: ddrescue.
 
 ### Using ddrescue
-In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. This time we will make a disk image of a different drive. Thus we first need to unmount it:
+In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. This time we will make a disk image of a different drive. Type `mount` and find the device file for the `Cat Archive` disk. Once you have found the device file, we need to unmount the Volume:
 
 ```
 $ sudo umount /media/techfocus/Cat\ Archive/
@@ -114,10 +114,10 @@ $ sudo umount /media/techfocus/Cat\ Archive/
 Then give this a try:
 
 ```
-$ sudo ddrescue if=/dev/sdb of=/home/techfocus/Desktop/cat_archive.001
+$ sudo ddrescue /dev/sdb /home/techfocus/Desktop/cat_archive.001
 ```
 
-This time we are disk imaging a different volume of the USB thumb drive. As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
+As you can see, `ddrescue` displays far more information than dd. The big benefit though is that it displays this information while it is working, not just once it finishes. `ddrescue` will even tell us if it detects any errors in reading the source disk – if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
 
 * we are not validating the disk image
 * we are not capturing metadata about its creation
