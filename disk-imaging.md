@@ -131,7 +131,7 @@ You will be happy to learn that we will now be leaving the command line! Guymage
 
 ![guymager launch screen](images/guymager-start.png)
 
-This screen lists all of your attached storage devices. You should see your USB thumb drive listed. In the "Linux device" column you should see `USB DISK 2.0`. Guymager only allows one to create physical disk images - in other words - our USB thumb drive is partitioned into three mountable volumes. With `dd` and `ddrescue` we were creating logical images of specific volumes of the USB thumb drive. A physical image is most desireable from a preservation standpoint as it is the most complete capture possible. Right click anywhere on the row for this device and choose "acquire image" from the contextual menu. 
+This screen lists all of your attached storage devices. You should see both of the virtual hard drives we just worked with, as well as a much larger virtual hard drive (this is the drive for the virtual machine's operating system). Look in the `Linux device` column for device file `sdb` – this is the `Cat Archive` disk we just imaged with `ddrescue`. Right click anywhere on the row for this device and choose "acquire image" from the contextual menu. 
 
 ![guymager acquire image screen](images/guymager-acquire.png)
 
@@ -149,16 +149,16 @@ Congratulations – you are the proud new owner of a forensic disk image!
 Disk imaging is a crucial baseline process in digital preservation and conservation, but creating one and properly storing it in a digital repository is only part of the story. In many ways a disk image can be thought of as a black box. Just as we can not assume that in 100 years people will have the proper software to play a Quicktime, and that we must accompany files with `representation information` about their makeup – it is advisable to do the same with disk imgages.
 
 ### Fiwalk
-Using a command line based tool called `fiwalk` we can extract metadat about the filesystem contained within a disk image. Let's use this tool to generate metadata about the `Ben's PC` disk image. In your terminal type the `fiwalk` command, followed by a `space`, and then drag and drop the `Bens_PC.001` disk image we produced with ddrescue directly into your terminal window. Your command should read like so:
+Using a command line based tool called `fiwalk` we can extract metadat about the filesystem contained within a disk image. Let's use this tool to generate metadata about the `Cat Archive` disk image. In your terminal type the `fiwalk` command, followed by a `space`, and then drag and drop the `cat_archive.E01` disk image we produced with ddrescue directly into your terminal window. Your command should read like so:
 
 ```
-$ fiwalk /home/techfocus/Desktop/Bens_PC.001
+$ fiwalk /home/techfocus/Desktop/cat_archive.E01
 ```
 Press enter. Fiwalk is now extracting information about the filesystem contained within the disk image – including an MD5 and SHA1 checksum for every single file. `fiwalk` is only outputting this metadata to the command line - we of course want to record this information in file form. `fiwalk` supports the output of XML in the Digita Forensics XML (DFXML) format. If your first fiwalk command is still running, press and hold the `control` button on your keyboard, and while holding control, press the letter `c`. This is called a `keyboard intterupt`, and is a way of halting a running program in your terminal. Now, press the up arrow on your keyboard. This will recall the last command that you typed. At the end of your command, add the following: `-X ~/Desktop/fiwalk.xml` Your full command should now look like this:
 ```
 $ fiwalk /home/techfocus/Desktop/Bens_PC.001 -X ~/Desktop/fiwalk.xml
 ```
-Press enter. Switching the `fiwalk` output to XML means that you will not see any output from the tool until it finishes. When the process completes you will see a new line in your terminal with a blinking cursor. When you see this new line, type `gedit ~/Desktop/fiwalk.xml` and press enter. This will open the XML file in a text editor so that we can read it. Feel free to browse around and get a feel for what DFXML looks like.
+Press enter. Switching the `fiwalk` output to XML means that you will not see any output from the tool until it finishes. When the process completes you will see a new line in your terminal with a blinking cursor. When you see this new line, type `gedit ~/Desktop/fiwalk.xml` and press enter. This will open the XML file in a text editor so that we can read it. Search (ctrl+f) for the word "dog". You will find entries for a file named `dog.jpg` – yet when we look at the contents of the `Cat Archive` Volume, we do not see this file. In the DFXML you will find that the `<fileobject>` entry for `dog.jpg` has a value of `<unalloc>1</unalloc>` – which indicates that the `dog.jpg` file object occupies "unallocated space". In other words – it is a deleted file! This file would have been captured by fiwalk regardless of whether a raw or forensic image was scanned. This is just a glimpse at some of the analytical possibilities with disk images.
 
 
 ### Emulation
