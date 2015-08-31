@@ -166,11 +166,11 @@ Lastly we will take a quick look at how emulation can provide a novel type of ac
 
 ![](images/MacII.jpg)
 
-You know well that you can not simply store this computer indefinitely as a preservation strategy, and because you attended the TechFocus III workshop you know how to create a disk image of the computer's hard drive. You disk image the computer, store this disk image in your instutition's repository, but then what? Let's take a look at how we can use an emulator to breathe life back into this disk image, so that it can serve as a proxy for the original computer. On the desktop of your virtual machine, you will find a folder named `Mini vMac`. Open it. Inside you will find three files, `MacII.ROM`, `Macintosh_IIci.001`, and `Mini vMac`. `Mini vMac` is an emulator – in this case it has been built to specifically emulate a Macintosh IIi, since this was the kind of computer the artist was using. `MacII.ROM` is a file that gives instructions to the emulator when it is first run – this ROM was extracted from a Mac IIci. The `Macintosh_IIci.001` file is a raw disk image of the artist's computer's hard drive. Let's launch the emulator – double click the purple `Mini vMac` icon. Initially you will see a window with a flashing disk icon:
+You know well that you can not simply store this computer indefinitely as a preservation strategy, and because you attended the TechFocus III workshop you know how to create a disk image of the computer's hard drive. You disk image the computer, store this disk image in your instutition's repository, but then what? Let's take a look at how we can use an emulator to breathe life back into this disk image, so that it can serve as a proxy for the original computer. On the desktop of your virtual machine, you will find an icon named `Mini vMac`. Double click it. Initially you will see a black window, but eventually you should see a gray screen with a flashing disk icon:
 
 ![](images/miniv-1.png)
 
-Once you see this screen, return to the Mini vMac folder, drag and drop the `Macintosh_IIci.001` file onto the Mini vMac window with the flashing disk – like so:
+Once you see this screen, take the `Macintosh_HD.001` disk image we made earlier, and drag and drop it onto the Mini vMac window with the flashing disk – like so:
 
 ![](images/miniv-2.png)
 
