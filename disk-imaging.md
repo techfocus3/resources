@@ -41,9 +41,6 @@ Although the physical form factor of USB 2.0 and 3.0 are identical – their in
 
 Although there are many many more tools one could use for disk imaging, for the purposes of this workshop we will be sticking with these three tools as examples. It warrants mentioning that all three are free and open source.
 
-### Handing control of the USB thumb drive to your Virtual Machine
-For this disk imaging exercise we will be making a disk image of the TechFocus USB thumb drive that you were provided at check-in. First – make sure that your Linux virtual machine is running, then plug in the TechFocus USB thumb drive. If the USB thumb drive was already plugged in when you started your virtual machine, please unplug it, and then plug it back in. This initial step is just to ensure that your Linux virtual machine has full control of the thumb drive, rather than your "real" computer.
-
 ### Preparing for disk imaging
 
 Before we can dive into using dd, ddrescue, and guymager to actually make disk images, there is some initial preparation that we need to do. Firstly, we need to find what is essentially an identifier your computer uses to refer to the USB thumb drive as a physical device.
@@ -67,18 +64,17 @@ none on /run/user type tmpfs (rw,noexec,nosuid,nodev,size=104857600,mode=0755)
 none on /sys/fs/pstore type pstore (rw)
 systemd on /sys/fs/cgroup/systemd type cgroup (rw,noexec,nosuid,nodev,none,name=systemd)
 gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,user=techfocus)
-/dev/sr0 on /media/techfocus/VBOXADDITIONS_5.0.0_101573 type iso9660 (ro,nosuid,nodev,uid=1000,gid=1000,iocharset=utf8,mode=0400,dmode=0500,uhelper=udisks2)
-/dev/sdb3 on /media/techfocus/Macintosh HD type hfs (rw,nosuid,nodev,allow_other,default_permissions,blksize=4096)
-/dev/sdb2 on /media/techfocus/TechFocus type fuseblk (rw,nosuid,nodev,allow_other,default_permissions,blksize=4096)
+/dev/sdc on /media/techfocus/Macintosh HD type hfs (rw,nosuid,nodev,uhelper=udisks2)
+/dev/sdb on /media/techfocus/Cat Archive type ext4 (rw,nosuid,nodev,uhelper=udisks2)
 ```
 
 This is a list of all of the mounted devices in your Linux virtual machine. Look for the line that mentions `Macintosh HD`. You will see that this line has three parts, first something that looks like `/dev/sdb3`, followed by `/media/techfocus/Macintosh HD`, and finally followed by `type fuseblk`. In other words:
 
 ```
-/dev/sbd3 /media/techfocus/Macintosh HD type hfs
+/dev/sbc /media/techfocus/Macintosh HD type hfs
 ```
 
-The second part of the line you will recognize as being the name of one of the USB thumb drive – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/sdb3` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the USB thumb drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
+The second part of the line you will recognize as being the name of one of the USB thumb drive – this is what we call the "Volume". It is what you as a user see when you plug in a readable piece of media – it is where you see all of your files. The first part of the line `/dev/sdc` is called the "device file" – this is where your computer assigns a location in its filesystem for the physical device of the USB thumb drive itself. This piece of information – the device file – is of crucial importance, and we will need it later, so write it down.
 
 Now that we have the device file, we need to "unmount" the "Volume". The USB device is currently preoccupied with talking to your operating system so that it can show you the `Macintosh HD` Volume and the files inside it. We need its full attention so that `dd` can read it in full. To unmount the Mac IIci Volume, type the following into your terminal and press enter (note the `\` after the word `Macintosh` this time. In the terminal, when you type in file paths with spaces you need to tell the computer that the space is intentional, and that you are continuing the file path. Computers unfortunately really are that dumb.):
 
@@ -95,10 +91,10 @@ To begin, open up your terminal. To read the manual for dd, type `man dd` and pr
 ```
 $ dd if=[device file goes here] of=[path to write disk image to]
 ```
-The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. This use of square brackets is very commonly used in examples of propper usage of command line tools. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/sdb3`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it `Macintosh_HD.001`. This means your `of=` should now read `of=/home/techfocus/Desktop/Macintosh_HD.001`. Stiching it all together, your full and complete command will look something like this:
+The text inside the `[ ]` brackets is of course a placeholder to explain what actually should go in this place. This use of square brackets is very commonly used in examples of propper usage of command line tools. As you can see, after `if=` we are supposed to write the device file of the disk we want to image. So this should look something like `if=/dev/sdc`. The output file is the full file path to where we would like to write the disk image – including the name of the disk image and its file extension. Let's put the disk image on our Desktop and call it `Macintosh_HD.001`. This means your `of=` should now read `of=/home/techfocus/Desktop/Macintosh_HD.001`. Stiching it all together, your full and complete command will look something like this:
 
 ```
-$ dd if=/dev/sdb3 of=/home/techfocus/Desktop/Macintosh_HD.001
+$ dd if=/dev/sdc of=/home/techfocus/Desktop/Macintosh_HD.001
 ```
 Type or copy/pase the above and press enter to begin the process of imaging your disk. You will notice that there is absolutely no indication as to what is happening – is the disk imaging process running? Is it working? Has your computer frozen? By default `dd` does not provide the user with any useful feedback or output. It would be good to coax some information out of it so that we know the process is working, and so that we can get an idea of how far along it is in the process.
 
@@ -114,13 +110,13 @@ This tells our computer to repeat the `killall` command every second - and thus 
 In your terminal, type `ddrescue --help` and press enter. As you can see, ddrescue has many options. We actually are not going to use any of them today. `ddrescue`'s syntax is very similar to `dd`, but a bit simpler: `ddrescue [input file] [output file]`. As you can see, `ddrescue` does not have the same `if=` `of=` paradigm as `dd` – you simply type the name of the program, follwed by the device file of the disk you wish to image, followed by the path to and filename of the disk image. This time we will make a disk image of a different drive. Thus we first need to unmount it:
 
 ```
-$ sudo umount /media/techfocus/Ben\'s\ PC/
+$ sudo umount /media/techfocus/Cat\ Archive/
 ```
 
 Then give this a try:
 
 ```
-$ sudo ddrescue if=/dev/sdb1 of=/home/techfocus/Desktop/Bens_PC.001
+$ sudo ddrescue if=/dev/sdb of=/home/techfocus/Desktop/cat_archive.001
 ```
 
 This time we are disk imaging a different volume of the USB thumb drive. As you can see, `ddrescue`'s output is much more useful – right out of the box we can see what the program is doing. It will even tell us if there are any errors in reading the source disk – while if this occurs with `dd`it will silently continue. So now we can make raw disk images using two free and open source command line tools. This is great – and as discussed previously, raw images are wonderful for preservation – but there are three big limitations with these tools and with raw images:
