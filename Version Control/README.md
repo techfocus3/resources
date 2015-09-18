@@ -10,7 +10,7 @@ A version control system enables developers to keep historical versions of the f
 ## Slides for the TF3 Workshop
 [Download PDF](https://github.com/techfocus3/resources/blob/master/Version%20Control/IntroToGit.pdf)
 
-[Slide online](http://techfocus3.github.io/gitscm)
+[Online Slides](http://techfocus3.github.io/gitscm)
 
 
 ## Browser based Git lessons
