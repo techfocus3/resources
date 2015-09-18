@@ -15,5 +15,5 @@ A version control system enables developers to keep historical versions of the f
 
 
 ## Browser based Git lessons
-[https://try.github.io/levels/1/challenges/1](https://try.github.io/levels/1/challenges/1)
+[https://try.github.io/levels/1/challenges/1](https://try.github.io/levels/1/challenges/1) 
 
